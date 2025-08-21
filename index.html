@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tiqo — Acceso offline‑first para eventos</title>
+  <meta name="description" content="Validación offline, operación simple y gobernanza unificada. Piloto en 1 puerta para medir throughput y tiempos de cola." />
+  <style>
+    :root{--bg:#0b1020;--panel:#0f1733;--text:#e9edf6;--muted:#9aa4b8;--brand:#ff2f92;--brand2:#7c8cff;--radius:16px;--ring:rgba(124,140,255,.35)}
+    *{box-sizing:border-box}
+    html,body{margin:0;background:linear-gradient(180deg,#0b1020,#0c1432);color:var(--text);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto}
+    a{color:var(--brand2);text-decoration:none}a:hover{text-decoration:underline}
+    .wrap{max-width:980px;margin:0 auto;padding:28px}
+    header{position:sticky;top:0;background:rgba(11,16,32,.75);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.07);z-index:10}
+    .nav{display:flex;align-items:center;gap:18px}
+    .nav a{opacity:.9}
+    img.logo{height:36px;display:block}
+    .hero{display:grid;gap:20px;grid-template-columns:1.1fr .9fr;align-items:center;margin:26px 0}
+    .card{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+    h1{font-size:34px;line-height:1.15;margin:0 0 10px} h2{font-size:24px;margin:0 0 8px} h3{font-size:18px;margin:0 0 6px}
+    p{margin:6px 0 12px}.muted{color:var(--muted)}
+    .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{appearance:none;border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+    .btn.primary{background:linear-gradient(135deg,var(--brand),#ff5fb1);color:#fff}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    input,select,textarea{width:100%;background:#0e1630;border:1px solid rgba(255,255,255,.15);color:#eaf2ff;border-radius:10px;padding:10px;outline:none}
+    input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px var(--ring)}
+    .price{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .plan{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px}
+    footer{opacity:.85;border-top:1px solid rgba(255,255,255,.08);padding:20px 0;margin-top:28px}
+    .tiny{font-size:12px;color:var(--muted)}
+    @media (max-width:900px){.hero{grid-template-columns:1fr}.grid-3,.price,.grid-2{grid-template-columns:1fr}}
+  </style>
+  <!-- Si querés usar GTM/GA más adelante, pegá acá sus scripts. Esta versión envía métricas directo a Google Sheets (Apps Script). -->
+</head>
+<body>
+  <header data-section="nav">
+    <div class="wrap nav">
+      <!-- Colocá tu archivo tiqo-logo.png junto al index.html -->
+      <img class="logo" src="tiqo-logo.png" alt="Tiqo"/>
+      <nav style="margin-left:auto;display:flex;gap:16px">
+        <a href="#valor">Valor</a>
+        <a href="#como">Cómo funciona</a>
+        <a href="#pricing">Precios</a>
+        <a href="#demo" class="btn ghost" data-cta="nav-demo">Demo</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" id="hero" data-section="hero">
+      <div>
+        <h1>Acceso que no se cae. Operación simple. Gobernanza unificada.</h1>
+        <p class="muted">Validación <b>offline</b>, tablero en vivo y cierre documentado. Empezá con un piloto en 1 puerta y medí throughput y tiempos de cola.</p>
+        <div class="cta">
+          <a href="#demo"><button class="btn primary" data-cta="demo-hero">Reservar piloto</button></a>
+          <a href="#pricing"><button class="btn ghost" data-cta="ver-precios">Ver precios</button></a>
+        </div>
+      </div>
+      <form id="leadHero" class="card">
+        <h3>Quiero ver una demo</h3>
+        <label>Nombre/Empresa<br/><input name="name" required placeholder="Ana — XYZ Live"/></label><br/>
+        <label>Email<br/><input name="email" type="email" required/></label><br/>
+        <button class="btn primary" type="submit" data-cta="lead-hero">Agendar</button>
+        <p class="muted tiny">Respondemos en &lt;24 h. NDA si lo necesitás.</p>
+      </form>
+    </section>
+
+    <section id="valor" class="grid-3" data-section="valor">
+      <div class="card"><h3>Problema</h3><p>Caídas de red, apps múltiples y poca visibilidad en momentos críticos.</p></div>
+      <div class="card"><h3>Solución</h3><p>Lectores que validan <b>sin conexión</b>, hub único y tablero en vivo.</p></div>
+      <div class="card"><h3>Impacto</h3><p>Ingreso previsible, staff autónomo y cierre más rápido con trazabilidad.</p></div>
+    </section>
+
+    <section id="como" class="card" data-section="como">
+      <h2>Cómo funciona</h2>
+      <div class="grid-3">
+        <div><h3>1) Preparar</h3><p class="muted">Importás pases (CSV/API), definís puertas y franjas.</p></div>
+        <div><h3>2) Entrar</h3><p class="muted"><b>Validación offline</b> con sincronización segura cada N min.</p></div>
+        <div><h3>3) Cerrar</h3><p class="muted">Reporte unificado en &lt;24 h con auditoría.</p></div>
+      </div>
+    </section>
+
+    <section id="pricing" class="price" data-section="pricing">
+      <div class="plan">
+        <h3>Starter</h3>
+        <p class="muted">Piloto 1 puerta offline.</p>
+        <ul><li>Setup guiado</li><li>Panel básico</li></ul>
+        <a href="#demo" class="btn primary" data-cta="pricing-starter">Probar</a>
+      </div>
+      <div class="plan" style="border-color:rgba(124,140,255,.6)">
+        <h3>Pro</h3>
+        <p class="muted">Hasta 6 puertas + tablero en vivo.</p>
+        <ul><li>Offline + sync</li><li>Conector ticketing/POS</li></ul>
+        <a href="#demo" class="btn primary" data-cta="pricing-pro">Consultar</a>
+      </div>
+      <div class="plan">
+        <h3>Enterprise</h3>
+        <p class="muted">SLA y multi‑sede.</p>
+        <ul><li>SSO & auditoría</li><li>Soporte 24/7</li></ul>
+        <a href="#demo" class="btn primary" data-cta="pricing-enterprise">Hablar</a>
+      </div>
+    </section>
+
+    <section id="demo" class="card" data-section="demo">
+      <h2>Reservá demo/piloto</h2>
+      <form id="leadDemo" class="grid-2">
+        <div>
+          <label>Nombre y apellido<br/><input name="name" required/></label><br/>
+          <label>Email corporativo<br/><input name="email" type="email" required/></label>
+        </div>
+        <div>
+          <label>Rol<br/>
+            <select name="role" required>
+              <option value="">Elegí…</option>
+              <option>Operaciones</option><option>Accesos</option><option>Venue/IT</option><option>Productor</option>
+            </select>
+          </label><br/>
+          <button class="btn primary" type="submit" data-cta="lead-demo">Enviar</button>
+          <p class="muted tiny">Medimos en sitio: % offline, p50 de escaneo y throughput.</p>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <small>© <span id="year"></span> Tiqo</small>
+      <small><a href="#">Privacidad</a> · <a href="#">Términos</a></small>
+    </div>
+  </footer>
+
+<script>
+  // ====== MÉTRICAS → GOOGLE SHEETS (Apps Script) ======
+  // 1) Creá un Google Apps Script (Web App) con el código que te pasé.
+  // 2) Reemplazá la URL abajo (ENDPOINT) por la de tu despliegue (…/exec).
+  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzn7UiDUBOtGsolF2p37X1rMbhh7nmMdGdLN0Yw_r7j0Qr4vhVE0kk9K9hrbKjIIJJf/exec';
+
+  // ====== TRACKING BÁSICO (clics, scroll, dwell, leads) ======
+  const UTM_KEYS = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+  const store = { utm:{}, sectionTimes:{}, visible:{}, start: Date.now(), maxScroll:0, sentDepths:new Set() };
+
+  function send(event, props = {}) {
+    const payload = {
+        ts: new Date().toISOString(),
+        event,
+        path: location.pathname + location.search + location.hash,
+        ref: document.referrer,
+        ua: navigator.userAgent,
+        ...store.utm,
+        ...props
+    };
+    const body = JSON.stringify(payload);
+
+    // 1) Preferir sendBeacon (no hace preflight; usa text/plain)
+    if (navigator.sendBeacon) {
+        const blob = new Blob([body], { type: 'text/plain;charset=UTF-8' });
+        navigator.sendBeacon(ENDPOINT, blob);
+        return;
+    }
+
+    // 2) Fallback a fetch SIN preflight:
+    //    - mode: 'no-cors' (respuesta opaca, pero nos da igual)
+    //    - Content-Type simple: text/plain
+    fetch(ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        body,
+        keepalive: true
+    }).catch(() => {});
+}
+
+  function track(ev,props){ if(ENDPOINT && ENDPOINT.startsWith('http')) send(ev,props); else console.log('[track]',ev,props); }
+
+  // UTMs (persistencia por sesión)
+  (function utm(){
+    const p = new URLSearchParams(location.search);
+    UTM_KEYS.forEach(k=>{ const v = p.get(k) || sessionStorage.getItem(k) || ''; if(v){ store.utm[k]=v; sessionStorage.setItem(k,v); }});
+  })();
+
+  // Año footer y page_load
+  document.getElementById('year').textContent = new Date().getFullYear();
+  track('page_load',{});
+
+  // Clicks en CTAs
+  document.querySelectorAll('[data-cta]').forEach(el=>{
+    el.addEventListener('click',()=>track('cta_click',{ id: el.dataset.cta }));
+  });
+
+  // Scroll depth (25/50/75/100)
+  window.addEventListener('scroll',()=>{
+    const percent = Math.round((window.scrollY + window.innerHeight) / document.body.scrollHeight * 100);
+    [25,50,75,100].forEach(t=>{
+      if(percent>=t && !store.sentDepths.has(t)){ store.sentDepths.add(t); track('scroll_depth',{ percent:t }); }
+    });
+    if (percent>store.maxScroll) store.maxScroll = percent;
+  },{passive:true});
+
+  // Dwell por sección
+  (function sectionDwell(){
+    const sections = document.querySelectorAll('[data-section]');
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        const id = e.target.getAttribute('data-section');
+        if(!store.sectionTimes[id]) store.sectionTimes[id]=0;
+        if(e.isIntersecting){ store.visible[id]=Date.now(); track('section_view',{ id }); }
+        else if(store.visible[id]){ store.sectionTimes[id]+= Date.now()-store.visible[id]; store.visible[id]=0; }
+      });
+    },{threshold:0.6});
+    sections.forEach(s=>io.observe(s));
+
+    function flush(){
+      Object.keys(store.visible).forEach(id=>{ if(store.visible[id]){ store.sectionTimes[id]+= Date.now()-store.visible[id]; store.visible[id]=0; }});
+      Object.entries(store.sectionTimes).forEach(([id,ms])=> track('section_dwell',{ id, seconds: Math.round(ms/1000) }));
+      track('time_on_page',{ seconds: Math.round((Date.now()-store.start)/1000), maxScroll: store.maxScroll });
+    }
+    window.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') flush(); });
+    window.addEventListener('beforeunload',flush);
+  })();
+
+  // Formularios → lead_submit (se guardan en la misma hoja)
+  function bindLeadForm(id){
+    const f = document.getElementById(id); if(!f) return;
+    f.addEventListener('submit', (ev)=>{
+      ev.preventDefault();
+      const fd = new FormData(f);
+      const data = Object.fromEntries(fd.entries());
+      track('lead_submit',{ form:id, name:data.name||'', email:data.email||'', role:data.role||'' });
+      f.reset();
+      const msg = document.createElement('div');
+      msg.textContent = '¡Gracias! Te contactamos en <24 h.';
+      msg.className = 'tiny'; f.appendChild(msg); setTimeout(()=>msg.remove(),4000);
+    });
+  }
+  bindLeadForm('leadHero');
+  bindLeadForm('leadDemo');
+</script>
+</body>
+</html>
