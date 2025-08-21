@@ -5,265 +5,227 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tiqo — Acceso offline‑first para eventos</title>
   <meta name="description" content="Validación offline, operación simple y gobernanza unificada. Piloto en 1 puerta para medir throughput y tiempos de cola." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#0b1020;--panel:#0f1733;--text:#e9edf6;--muted:#9aa4b8;--brand:#ff2f92;--brand2:#7c8cff;--ring:rgba(124,140,255,.35);--radius:16px}
+    :root{
+      --bg:#ffffff;--text:#0f172a;--muted:#64748b;--subtle:#eef2ff;--line:#e2e8f0;
+      --brand:#7c3aed;--brand-2:#06b6d4;--ok:#16a34a;--warn:#f59e0b;--err:#ef4444;
+      --radius:18px;--shadow:0 10px 30px rgba(2,6,23,.07);
+    }
     *{box-sizing:border-box}
-    html,body{margin:0;background:linear-gradient(180deg,#0b1020,#0c1432);color:var(--text);font:16px/1.56 system-ui,-apple-system,Segoe UI,Roboto}
-    a{color:var(--brand2);text-decoration:none} a:hover{text-decoration:underline}
-    .wrap{max-width:1040px;margin:0 auto;padding:28px}
-    header{position:sticky;top:0;background:rgba(11,16,32,.75);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.07);z-index:10}
+    html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto}
+    a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
+    .wrap{max-width:1160px;margin:0 auto;padding:24px}
+    header{position:sticky;top:0;background:rgba(255,255,255,.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:20}
     .nav{display:flex;align-items:center;gap:18px}
-    .nav a{opacity:.9}
-    img.logo{height:36px;display:block}
-    .hero{display:grid;gap:22px;grid-template-columns:1.1fr .9fr;align-items:center;margin:26px 0}
-    .card{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-    h1{font-size:34px;line-height:1.15;margin:0 0 10px} h2{font-size:24px;margin:0 0 8px} h3{font-size:18px;margin:0 0 6px}
-    p{margin:6px 0 12px}.muted{color:var(--muted)} .tiny{font-size:12px;color:var(--muted)}
-    .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    .btn{appearance:none;border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
-    .btn.primary{background:linear-gradient(135deg,var(--brand),#ff5fb1);color:#fff}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff}
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-    input,select,textarea{width:100%;background:#0e1630;border:1px solid rgba(255,255,255,.15);color:#eaf2ff;border-radius:10px;padding:10px;outline:none}
-    input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px var(--ring)}
-    .price{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-    .plan{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#111a36;color:#eaf2ff;border:1px solid rgba(255,255,255,.15);padding:10px 14px;border-radius:10px;display:none;z-index:999}
-    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);z-index:999}
-    .modal .box{max-width:620px;width:92%;background:var(--panel);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{border:1px solid rgba(255,255,255,.2);padding:6px 10px;border-radius:999px;cursor:pointer}
-    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.1);padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.04)}
-    .feedback{display:flex;align-items:center;gap:8px;margin-top:8px}
-    .thumb{cursor:pointer;padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2)}
-    details{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:12px 16px;border-radius:12px}
-    details+details{margin-top:8px}
-    footer{opacity:.85;border-top:1px solid rgba(255,255,255,.08);padding:20px 0;margin-top:28px}
-    @media (max-width:900px){.hero{grid-template-columns:1fr}.grid-3,.price,.grid-2{grid-template-columns:1fr}}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+    .brand img{height:28px}
+    nav a{padding:10px 12px;border-radius:10px}
+    nav a:hover{background:#f8fafc}
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;padding:28px 0}
+    .kicker{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--subtle),#f0f9ff);color:#334155;border:1px solid var(--line);padding:6px 10px;border-radius:999px;font-weight:600}
+    h1{font-size:46px;line-height:1.05;margin:10px 0 12px}
+    .highlight{background:linear-gradient(135deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .muted{color:var(--muted)}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+    .btn{appearance:none;border:none;border-radius:12px;padding:13px 18px;font-weight:700;cursor:pointer}
+    .btn.primary{background:linear-gradient(135deg,var(--brand),#8b5cf6);color:white;box-shadow:var(--shadow)}
+    .btn.ghost{background:white;border:1px solid var(--line)}
+    .card{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+    .section{padding:26px 0}
+    .section h2{font-size:28px;margin:0 0 10px}
+    .device{position:relative;background:linear-gradient(180deg,#0b1020,#111827);border-radius:24px;border:1px solid #0f172a;box-shadow:0 20px 40px rgba(2,6,23,.15);padding:20px;color:#e5e7eb}
+    .device .bar{display:flex;gap:8px;margin-bottom:12px}
+    .dot{width:8px;height:8px;border-radius:999px;background:#94a3b8}
+    .scanner{height:360px;border-radius:14px;background:radial-gradient(circle at 50% 50%, rgba(124,58,237,.25), rgba(6,182,212,.18) 40%, transparent 65%),linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);display:grid;place-items:center;position:relative;overflow:hidden}
+    .beam{position:absolute;width:110%;height:2px;background:linear-gradient(90deg,transparent,rgba(59,130,246,.8),transparent);top:0;animation:scan 2.8s linear infinite}
+    @keyframes scan{0%{top:0}100%{top:100%}}
+    .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:8px 12px;border-radius:999px;background:#fff}
+    .feature{display:flex;gap:12px}
+    .feature svg{flex:0 0 36px}
+    .price{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .plan{padding:20px;border-radius:16px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow)}
+    .plan.best{border-color:#c4b5fd;box-shadow:0 10px 30px rgba(124,58,237,.12)}
+    .plan .head{display:flex;justify-content:space-between;align-items:center}
+    .bullets{margin:8px 0 0 18px}
+    .logos{display:flex;gap:18px;opacity:.75;flex-wrap:wrap}
+    .logos span{height:26px;width:100px;border-radius:8px;background:#f1f5f9;border:1px solid var(--line)}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:#f1f5ff;border:1px solid #dbeafe;color:#1e3a8a;font-weight:600}
+    .faq details{background:#f8fafc;border:1px solid var(--line);padding:12px 14px;border-radius:12px}
+    .faq details+details{margin-top:8px}
+    footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0}
+    .reveal{opacity:0;transform:translateY(8px);transition:all .5s ease}
+    .reveal.show{opacity:1;transform:none}
+    @media (max-width:980px){.hero{grid-template-columns:1fr}.grid-3,.grid-2,.price{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <header data-section="nav">
-    <div class="wrap nav">
-      <img class="logo" src="tiqo-logo.png" alt="Tiqo"/>
-      <nav style="margin-left:auto;display:flex;gap:16px">
-        <a href="#valor" data-nav="valor">Valor</a>
-        <a href="#producto" data-nav="producto">Producto</a>
-        <a href="#casos" data-nav="casos">Casos</a>
-        <a href="#pricing" data-nav="pricing">Precios</a>
-        <a href="#demo" class="btn ghost" data-cta="nav-demo">Demo</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <section class="hero" id="hero" data-section="hero">
-      <div>
-        <h1 id="heroTitle">Acceso que no se cae. Operación simple. Gobernanza unificada.</h1>
-        <p class="muted" id="heroSub">Validación <b>offline</b>, tablero en vivo y cierre documentado. Empezá con un piloto en 1 puerta y medí throughput y tiempos de cola.</p>
-        <div class="cta">
-          <a href="#demo"><button class="btn primary" data-cta="hero-primary">Reservar piloto</button></a>
-          <a href="#producto"><button class="btn ghost" data-cta="hero-secondary">Ver cómo funciona</button></a>
-        </div>
-        <div class="feedback">
-          <span class="tiny">¿Este enfoque te sirve?</span>
-          <span class="thumb" data-feedback="hero" data-v="up">👍 Sí</span>
-          <span class="thumb" data-feedback="hero" data-v="down">👎 No</span>
-        </div>
-      </div>
-      <form id="leadHero" class="card">
-        <h3>Quiero ver una demo</h3>
-        <label>Nombre/Empresa<br/><input name="name" required placeholder="Ana — XYZ Live"/></label><br/>
-        <label>Email<br/><input name="email" type="email" required/></label><br/>
-        <button class="btn primary" type="submit" data-cta="lead-hero">Agendar</button>
-        <p class="muted tiny">Respondemos en &lt;24 h. NDA si lo necesitás.</p>
-      </form>
-    </section>
-
-    <section id="valor" class="grid-3" data-section="valor">
-      <div class="card"><h3>Problema</h3><p>Caídas de red, apps múltiples y poca visibilidad en momentos críticos.</p><a href="#producto" class="pill" data-open="detalle-problema">Ver detalle</a></div>
-      <div class="card"><h3>Solución</h3><p>Lectores que validan <b>sin conexión</b>, hub único y tablero en vivo.</p><span class="pill" data-open="detalle-solucion">Ver detalle</span></div>
-      <div class="card"><h3>Impacto</h3><p>Ingreso previsible, staff autónomo y cierre más rápido con trazabilidad.</p><span class="pill" data-open="detalle-impacto">Ver caso</span></div>
-    </section>
-
-    <section id="producto" class="card" data-section="producto">
-      <h2>Cómo funciona</h2>
-      <div class="grid-3">
-        <div><h3>1) Preparar</h3><p class="muted">Importás pases (CSV/API), definís puertas y franjas.</p><a class="pill" data-open="det-preparar">Ver</a></div>
-        <div><h3>2) Entrar</h3><p class="muted"><b>Validación offline</b> con sincronización segura cada N min.</p><a class="pill" data-open="det-entrar">Ver</a></div>
-        <div><h3>3) Cerrar</h3><p class="muted">Reporte unificado en &lt;24 h con auditoría.</p><a class="pill" data-open="det-cerrar">Ver</a></div>
-      </div>
-    </section>
-
-    <section id="casos" class="card" data-section="casos">
-      <h2>Casos</h2>
-      <details data-faq="caso1"><summary>Festival mediano (3 puertas offline)</summary><p>+24% throughput vs. control, 0 caídas por red. Cierre en 12 h.</p></details>
-      <details data-faq="caso2"><summary>Teatro (función pico)</summary><p>Tiempo de escaneo p50 0,45s; guía por puertas redujo colas.</p></details>
-    </section>
-
-    <section id="pricing" class="price" data-section="pricing">
-      <div class="plan">
-        <h3>Starter</h3>
-        <p class="muted">Piloto 1 puerta offline.</p>
-        <ul><li>Setup guiado</li><li>Panel básico</li></ul>
-        <button class="btn primary" data-plan="Starter">Probar</button>
-      </div>
-      <div class="plan" style="border-color:rgba(124,140,255,.6)">
-        <h3>Pro</h3>
-        <p class="muted">Hasta 6 puertas + tablero en vivo.</p>
-        <ul><li>Offline + sync</li><li>Conector ticketing/POS</li></ul>
-        <button class="btn primary" data-plan="Pro">Consultar</button>
-      </div>
-      <div class="plan">
-        <h3>Enterprise</h3>
-        <p class="muted">SLA y multi‑sede.</p>
-        <ul><li>SSO & auditoría</li><li>Soporte 24/7</li></ul>
-        <button class="btn primary" data-plan="Enterprise">Hablar</button>
-      </div>
-    </section>
-
-    <section id="demo" class="card" data-section="demo">
-      <h2>Reservá demo/piloto</h2>
-      <form id="leadDemo" class="grid-2">
-        <div>
-          <label>Nombre y apellido<br/><input name="name" required/></label><br/>
-          <label>Email corporativo<br/><input name="email" type="email" required/></label>
-        </div>
-        <div>
-          <label>Rol<br/>
-            <select name="role" required>
-              <option value="">Elegí…</option>
-              <option>Operaciones</option><option>Accesos</option><option>Venue/IT</option><option>Productor</option>
-            </select>
-          </label><br/>
-          <button class="btn primary" type="submit" data-cta="lead-demo">Enviar</button>
-          <p class="muted tiny">Medimos en sitio: % offline, p50 de escaneo y throughput.</p>
-        </div>
-      </form>
-    </section>
-  </main>
-
-  <footer>
-    <div class="wrap" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <small>© <span id="year"></span> Tiqo</small>
-      <small><a href="#">Privacidad</a> · <a href="#">Términos</a></small>
-    </div>
-  </footer>
-
-  <!-- Toast y Modales reutilizables -->
-  <div class="toast" id="toast"></div>
-  <div class="modal" id="modal">
-    <div class="box">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 id="modalTitle">Detalle</h3><button class="btn ghost" id="modalClose">Cerrar</button></div>
-      <div id="modalBody" class="muted" style="margin-top:6px"></div>
-      <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-        <span class="tiny">¿Te interesa este apartado?</span>
-        <button class="btn ghost" data-modal-feedback="yes">Sí</button>
-        <button class="btn ghost" data-modal-feedback="no">No</button>
-      </div>
-    </div>
+<header>
+  <div class="wrap nav">
+    <div class="brand"><img src="tiqo-logo.png" alt="Tiqo"/> TIQO</div>
+    <nav style="margin-left:auto;display:flex;gap:6px">
+      <a href="#valor">Valor</a>
+      <a href="#producto">Producto</a>
+      <a href="#pricing">Precios</a>
+      <a href="#casos">Casos</a>
+      <a class="btn primary" href="#demo">Probar piloto</a>
+    </nav>
   </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <span class="kicker">Offline‑first para eventos</span>
+      <h1>Acceso <span class="highlight">que no se cae</span> y operación con <span class="highlight">gobernanza</span>.</h1>
+      <p class="muted">Validación sin conexión, panel en vivo y cierre auditado en 24 h. Empezá con un piloto en 1 puerta y medí throughput y tiempos de cola.</p>
+      <div class="cta">
+        <a href="#demo"><button class="btn primary" data-cta="hero_primary">Reservar piloto</button></a>
+        <a href="#producto"><button class="btn ghost" data-cta="hero_secondary">Ver cómo funciona</button></a>
+        <span class="chip">⏱ p50 escaneo: 0,45 s</span>
+        <span class="chip">📶 100% offline en puerta</span>
+      </div>
+      <div class="logos" style="margin-top:16px">
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+    <div class="device reveal">
+      <div class="bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="scanner">
+        <div class="beam"></div>
+        <div style="text-align:center">
+          <div class="badge">Modo avión activo</div>
+          <h3 style="margin:10px 0 6px">Listo para validar</h3>
+          <p class="muted" style="margin:0">Pase #A1C9 • Puerta Norte • 14:05</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="valor" class="section reveal">
+    <h2>Valor</h2>
+    <div class="grid-3">
+      <div class="card feature">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7h16M4 12h16M4 17h16" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/></svg>
+        <div><h3>Sin caídas en puerta</h3><p class="muted">Validación offline con sincronización segura. Sin filas por red.</p></div>
+      </div>
+      <div class="card feature">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v18M3 12h18" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/></svg>
+        <div><h3>Un solo hub</h3><p class="muted">Acceso + POS + panel. Menos saltos entre apps, más control.</p></div>
+      </div>
+      <div class="card feature">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="#22c55e" stroke-width="2"/><path d="M8 12l2.5 2.5L16 9" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/></svg>
+        <div><h3>Gobernanza</h3><p class="muted">Trazabilidad por puerta/usuario, alertas y cierre auditado.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="producto" class="section reveal">
+    <h2>Cómo funciona</h2>
+    <div class="grid-3">
+      <div class="card"><h3>1. Preparar</h3><p class="muted">Importás pases (CSV/API), definís puertas y reglas.</p></div>
+      <div class="card"><h3>2. Entrar</h3><p class="muted">Validación en modo avión y sync cada N min.</p></div>
+      <div class="card"><h3>3. Cerrar</h3><p class="muted">Reporte unificado en 24 h con auditoría.</p></div>
+    </div>
+  </section>
+
+  <section id="casos" class="section reveal">
+    <h2>Casos</h2>
+    <div class="card grid-3">
+      <div><div class="badge">Festival (3 puertas)</div><h3>+24% throughput</h3><p class="muted">Vs. control. 0 caídas por red.</p></div>
+      <div><div class="badge">Teatro</div><h3>p50 0,45 s</h3><p class="muted">Escaneo por pase en función pico.</p></div>
+      <div><div class="badge">Venue</div><h3>Cierre 12 h</h3><p class="muted">Reporte auditado mismo día.</p></div>
+    </div>
+  </section>
+
+  <section id="pricing" class="section reveal">
+    <h2>Precios</h2>
+    <div class="price">
+      <div class="plan"><div class="head"><h3>Starter</h3><span class="badge">Piloto</span></div>
+        <p class="muted">1 puerta offline, hasta 3.000 ingresos.</p>
+        <ul class="bullets"><li>Setup guiado</li><li>Panel básico</li></ul>
+        <a href="#demo" class="btn ghost" data-cta="pricing_starter">Probar gratis</a>
+      </div>
+      <div class="plan best"><div class="head"><h3>Pro</h3><span class="badge">Eventos</span></div>
+        <p class="muted">Hasta 6 puertas + tablero en vivo.</p>
+        <ul class="bullets"><li>Offline + sync</li><li>1 conector ticketing/POS</li><li>Soporte prioritario</li></ul>
+        <a href="#demo" class="btn primary" data-cta="pricing_pro">Solicitar precio</a>
+      </div>
+      <div class="plan"><div class="head"><h3>Enterprise</h3><span class="badge">Venue</span></div>
+        <p class="muted">SLA, multi‑sede y auditoría avanzada.</p>
+        <ul class="bullets"><li>SSO & controles</li><li>Onboarding en sitio</li></ul>
+        <a href="#demo" class="btn ghost" data-cta="pricing_enterprise">Hablar con ventas</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="demo" class="section reveal">
+    <div class="card grid-2">
+      <div>
+        <h2>Reservá demo / piloto</h2>
+        <p class="muted">Medimos en sitio: % offline, p50 de escaneo y throughput.</p>
+      </div>
+      <form id="leadForm">
+        <label>Nombre y empresa<br/><input name="name" required placeholder="Ana — XYZ Live"/></label><br/>
+        <label>Email corporativo<br/><input name="email" type="email" required placeholder="ana@organizador.com"/></label><br/>
+        <label>Rol<br/>
+          <select name="role" required>
+            <option value="">Elegí…</option>
+            <option>Operaciones</option><option>Accesos</option><option>Venue/IT</option><option>Productor</option>
+          </select>
+        </label><br/>
+        <button class="btn primary" type="submit" data-cta="lead_submit">Agendar</button>
+        <p class="tiny muted">Respondemos en &lt;24 h. NDA si lo necesitás.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <small>© <span id="year"></span> Tiqo</small>
+    <small><a href="#">Privacidad</a> · <a href="#">Términos</a></small>
+  </div>
+</footer>
 
 <script>
-  // ====== CONFIG ======
-  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzn7UiDUBOtGsolF2p37X1rMbhh7nmMdGdLN0Yw_r7j0Qr4vhVE0kk9K9hrbKjIIJJf/exec';
-  
-  // ====== TRACKING (Sheets) ======
+  // ===== CONFIG =====
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzn7UiDUBOtGsolF2p37X1rMbhh7nmMdGdLN0Yw_r7j0Qr4vhVE0kk9K9hrbKjIIJJf/exec';
+  // ===== Reveal on scroll =====
+  const io=new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('show',e.isIntersecting)),{threshold:.2});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // ===== Tracking a Google Sheets =====
   const UTM_KEYS=['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
-  const store={utm:{},sectionTimes:{},visible:{},start:Date.now(),maxScroll:0,sentDepths:new Set(),variant:'A'};
+  const store={utm:{},start:Date.now(),maxScroll:0,sentDepths:new Set()};
+  (function utm(){const p=new URLSearchParams(location.search);UTM_KEYS.forEach(k=>{const v=p.get(k)||sessionStorage.getItem(k)||'';if(v){store.utm[k]=v;sessionStorage.setItem(k,v);}})})();
 
-  function send(event, props={}){
-    const payload={ts:new Date().toISOString(),event,path:location.pathname+location.search+location.hash,ref:document.referrer,ua:navigator.userAgent,variant:store.variant,...store.utm,...props};
+  function send(payload){
     const body=JSON.stringify(payload);
-    if(navigator.sendBeacon){const blob=new Blob([body],{type:'text/plain;charset=UTF-8'});navigator.sendBeacon(ENDPOINT,blob);return;}
-    fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body,keepalive:true}).catch(()=>{});
+    if(navigator.sendBeacon){const blob=new Blob([body],{type:'text/plain;charset=UTF-8'});navigator.sendBeacon(ENDPOINT,blob);return}
+    fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body,keepalive:true}).catch(()=>{})
   }
-  function track(ev,props){if(ENDPOINT.startsWith('http')) send(ev,props); else console.log('[track]',ev,props);}
+  function track(event,props={}){ if(!ENDPOINT.startsWith('http')){ console.log('[track]',event,props); return;} send({ts:new Date().toISOString(),event,path:location.pathname+location.search+location.hash,ref:document.referrer,ua:navigator.userAgent,...store.utm,...props}); }
 
-  // ====== Helpers UI ======
-  const $=sel=>document.querySelector(sel);
-  function toast(msg){const t=$('#toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2400)}
-  function openModal(title,html,id){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;$('#modal').style.display='flex';track('modal_open',{id});}
-  $('#modalClose').onclick=()=>{$('#modal').style.display='none';track('modal_close',{});} 
-  document.querySelectorAll('[data-modal-feedback]').forEach(b=>b.addEventListener('click',()=>{track('modal_feedback',{v:b.dataset.modalFeedback});toast('¡Gracias!')}));
-
-  // ====== Variantes (A/B simple con ?v=b) ======
-  (function variant(){const p=new URLSearchParams(location.search);store.variant=(p.get('v')||'a').toUpperCase()==='B'?'B':'A';if(store.variant==='B'){document.getElementById('heroTitle').textContent='Gobernanza en tiempo real. Acceso sin fricción.';document.getElementById('heroSub').innerHTML='Panel operativo en vivo, <b>validación offline</b> y cierre auditado en 24 h.';} track('variant_assign',{variant:store.variant});})()
-
-  // ====== UTMs ======
-  (function utm(){const p=new URLSearchParams(location.search);UTM_KEYS.forEach(k=>{const v=p.get(k)||sessionStorage.getItem(k)||''; if(v){store.utm[k]=v; sessionStorage.setItem(k,v);}});})();
-
-  // Año + page_load + nav clicks
+  // page load + year
   document.getElementById('year').textContent=new Date().getFullYear();
   track('page_load',{});
-  document.querySelectorAll('[data-nav]').forEach(a=>a.addEventListener('click',()=>track('nav_click',{to:a.dataset.nav})));
 
-  // CTA & feedback clicks
-  document.querySelectorAll('[data-cta]').forEach(el=>el.addEventListener('click',()=>track('cta_click',{id:el.dataset.cta})));
-  document.querySelectorAll('[data-feedback]').forEach(el=>el.addEventListener('click',()=>{track('feedback_vote',{loc:el.dataset.feedback,v:el.dataset.v});toast('¡Gracias por el feedback!')}));
+  // nav & CTA clicks
+  document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',()=>track('nav_click',{to:a.getAttribute('href').replace('#','')})));
+  document.querySelectorAll('[data-cta]').forEach(b=>b.addEventListener('click',()=>track('cta_click',{id:b.dataset.cta})));
 
-  // Pricing plan interest → abre micro‑form modal
-  document.querySelectorAll('[data-plan]').forEach(btn=>btn.addEventListener('click',()=>{
-    const plan=btn.dataset.plan;
-    const html=`<p>Dejanos 2 datos y te contactamos por <b>${plan}</b>.</p>
-      <div class="grid-2">
-        <label>Nombre<br/><input id="mf_name"/></label>
-        <label>Email<br/><input id="mf_email" type="email"/></label>
-      </div>
-      <div class="chips" style="margin-top:8px">
-        <span class="chip" data-chip>Caídas de red</span>
-        <span class="chip" data-chip>Colas</span>
-        <span class="chip" data-chip>Integraciones</span>
-        <span class="chip" data-chip>Auditoría</span>
-      </div>
-      <div class="cta" style="margin-top:10px"><button class="btn primary" id="mf_send">Enviar</button></div>`;
-    openModal('Interés en plan',html,'plan_'+plan);
-    document.querySelectorAll('[data-chip]').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('pill')));
-    setTimeout(()=>{
-      const sendBtn=document.getElementById('mf_send');
-      if(sendBtn){sendBtn.addEventListener('click',()=>{
-        const name=document.getElementById('mf_name').value||'';
-        const email=document.getElementById('mf_email').value||'';
-        const pains=[...document.querySelectorAll('[data-chip].pill')].map(x=>x.textContent.trim());
-        track('plan_interest_submit',{plan,name,email,pains:pains.join('|')});
-        toast('¡Gracias! Te contactamos en <24 h.');
-        document.getElementById('modal').style.display='none';
-      });}
-    },0);
-  }));
+  // scroll depth buckets
+  window.addEventListener('scroll',()=>{const p=Math.round((scrollY+innerHeight)/document.body.scrollHeight*100);[25,50,75,100].forEach(t=>{if(p>=t&&!store.sentDepths.has(t)){store.sentDepths.add(t);track('scroll_depth',{percent:t});}}); if(p>store.maxScroll) store.maxScroll=p;},{passive:true});
+  window.addEventListener('beforeunload',()=>track('time_on_page',{seconds:Math.round((Date.now()-store.start)/1000),maxScroll:store.maxScroll}));
 
-  // Detalles (modales de contenido)
-  const DETAILS={
-    'detalle-problema': '<ul><li>Dependencia de red en picos</li><li>Múltiples apps para acceso/pagos</li><li>Baja visibilidad para decidir</li></ul>',
-    'detalle-solucion': '<ul><li>Validación offline con sync seguro</li><li>Hub único: acceso + POS</li><li>Panel con alertas por puerta</li></ul>',
-    'detalle-impacto': '<p>Throughput +20–30%, cero caídas por red, cierre en 24 h con auditoría.</p>',
-    'det-preparar': '<p>Importás CSV o API. Definís reglas por puerta/franja y listas de control.</p>',
-    'det-entrar': '<p>Operación en modo avión. Reintentos automáticos y colas locales.</p>',
-    'det-cerrar': '<p>Reportes por puerta y usuarios, exportes firmados y bitácora de incidentes.</p>'
-  };
-  document.querySelectorAll('[data-open]').forEach(e=>e.addEventListener('click',()=>{const id=e.dataset.open;openModal('Detalle',DETAILS[id]||'Detalle',id);}));
-
-  // FAQ / Casos toggles
-  document.querySelectorAll('details[data-faq]').forEach(d=>d.addEventListener('toggle',()=>track('faq_toggle',{id:d.dataset.faq,open:d.open})));
-
-  // Dwell por sección + scroll depth
-  window.addEventListener('scroll',()=>{
-    const percent=Math.round((window.scrollY+window.innerHeight)/document.body.scrollHeight*100);
-    [25,50,75,100].forEach(t=>{if(percent>=t&&!store.sentDepths.has(t)){store.sentDepths.add(t);track('scroll_depth',{percent:t});}}); if(percent>store.maxScroll) store.maxScroll=percent;
-  },{passive:true});
-
-  (function sectionDwell(){
-    const sections=document.querySelectorAll('[data-section]');
-    const io=new IntersectionObserver(entries=>{entries.forEach(e=>{const id=e.target.getAttribute('data-section'); if(!store.sectionTimes[id]) store.sectionTimes[id]=0; if(e.isIntersecting){store.visible[id]=Date.now(); track('section_view',{id});} else if(store.visible[id]){store.sectionTimes[id]+=Date.now()-store.visible[id]; store.visible[id]=0;}})}, {threshold:0.6});
-    sections.forEach(s=>io.observe(s));
-    function flush(){Object.keys(store.visible).forEach(id=>{if(store.visible[id]){store.sectionTimes[id]+=Date.now()-store.visible[id]; store.visible[id]=0;}}); Object.entries(store.sectionTimes).forEach(([id,ms])=>track('section_dwell',{id,seconds:Math.round(ms/1000)})); track('time_on_page',{seconds:Math.round((Date.now()-store.start)/1000),maxScroll:store.maxScroll});}
-    window.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden') flush();}); window.addEventListener('beforeunload',flush);
-  })();
-
-  // Formularios → lead_submit
-  function bindLeadForm(id){const f=document.getElementById(id); if(!f) return; f.addEventListener('submit',ev=>{ev.preventDefault(); const fd=new FormData(f); const data=Object.fromEntries(fd.entries()); track('lead_submit',{form:id,name:data.name||'',email:data.email||'',role:data.role||''}); f.reset(); toast('¡Gracias! Te contactamos en <24 h.');});}
-  bindLeadForm('leadHero'); bindLeadForm('leadDemo');
+  // lead form
+  const f=document.getElementById('leadForm');
+  f.addEventListener('submit',ev=>{ev.preventDefault();const fd=new FormData(f);const d=Object.fromEntries(fd.entries());track('lead_submit',d);f.reset();alert('¡Gracias! Te contactamos en <24 h.');});
 </script>
 </body>
 </html>
