@@ -6,19 +6,19 @@
   <title>Tiqo — Acceso offline‑first para eventos</title>
   <meta name="description" content="Validación offline, operación simple y gobernanza unificada. Piloto en 1 puerta para medir throughput y tiempos de cola." />
   <style>
-    :root{--bg:#0b1020;--panel:#0f1733;--text:#e9edf6;--muted:#9aa4b8;--brand:#ff2f92;--brand2:#7c8cff;--radius:16px;--ring:rgba(124,140,255,.35)}
+    :root{--bg:#0b1020;--panel:#0f1733;--text:#e9edf6;--muted:#9aa4b8;--brand:#ff2f92;--brand2:#7c8cff;--ring:rgba(124,140,255,.35);--radius:16px}
     *{box-sizing:border-box}
-    html,body{margin:0;background:linear-gradient(180deg,#0b1020,#0c1432);color:var(--text);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto}
-    a{color:var(--brand2);text-decoration:none}a:hover{text-decoration:underline}
-    .wrap{max-width:980px;margin:0 auto;padding:28px}
+    html,body{margin:0;background:linear-gradient(180deg,#0b1020,#0c1432);color:var(--text);font:16px/1.56 system-ui,-apple-system,Segoe UI,Roboto}
+    a{color:var(--brand2);text-decoration:none} a:hover{text-decoration:underline}
+    .wrap{max-width:1040px;margin:0 auto;padding:28px}
     header{position:sticky;top:0;background:rgba(11,16,32,.75);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.07);z-index:10}
     .nav{display:flex;align-items:center;gap:18px}
     .nav a{opacity:.9}
     img.logo{height:36px;display:block}
-    .hero{display:grid;gap:20px;grid-template-columns:1.1fr .9fr;align-items:center;margin:26px 0}
+    .hero{display:grid;gap:22px;grid-template-columns:1.1fr .9fr;align-items:center;margin:26px 0}
     .card{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
     h1{font-size:34px;line-height:1.15;margin:0 0 10px} h2{font-size:24px;margin:0 0 8px} h3{font-size:18px;margin:0 0 6px}
-    p{margin:6px 0 12px}.muted{color:var(--muted)}
+    p{margin:6px 0 12px}.muted{color:var(--muted)} .tiny{font-size:12px;color:var(--muted)}
     .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
     .btn{appearance:none;border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
     .btn.primary{background:linear-gradient(135deg,var(--brand),#ff5fb1);color:#fff}
@@ -29,21 +29,29 @@
     input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px var(--ring)}
     .price{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
     .plan{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#111a36;color:#eaf2ff;border:1px solid rgba(255,255,255,.15);padding:10px 14px;border-radius:10px;display:none;z-index:999}
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);z-index:999}
+    .modal .box{max-width:620px;width:92%;background:var(--panel);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{border:1px solid rgba(255,255,255,.2);padding:6px 10px;border-radius:999px;cursor:pointer}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.1);padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.04)}
+    .feedback{display:flex;align-items:center;gap:8px;margin-top:8px}
+    .thumb{cursor:pointer;padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2)}
+    details{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:12px 16px;border-radius:12px}
+    details+details{margin-top:8px}
     footer{opacity:.85;border-top:1px solid rgba(255,255,255,.08);padding:20px 0;margin-top:28px}
-    .tiny{font-size:12px;color:var(--muted)}
     @media (max-width:900px){.hero{grid-template-columns:1fr}.grid-3,.price,.grid-2{grid-template-columns:1fr}}
   </style>
-  <!-- Si querés usar GTM/GA más adelante, pegá acá sus scripts. Esta versión envía métricas directo a Google Sheets (Apps Script). -->
 </head>
 <body>
   <header data-section="nav">
     <div class="wrap nav">
-      <!-- Colocá tu archivo tiqo-logo.png junto al index.html -->
       <img class="logo" src="tiqo-logo.png" alt="Tiqo"/>
       <nav style="margin-left:auto;display:flex;gap:16px">
-        <a href="#valor">Valor</a>
-        <a href="#como">Cómo funciona</a>
-        <a href="#pricing">Precios</a>
+        <a href="#valor" data-nav="valor">Valor</a>
+        <a href="#producto" data-nav="producto">Producto</a>
+        <a href="#casos" data-nav="casos">Casos</a>
+        <a href="#pricing" data-nav="pricing">Precios</a>
         <a href="#demo" class="btn ghost" data-cta="nav-demo">Demo</a>
       </nav>
     </div>
@@ -52,11 +60,16 @@
   <main class="wrap">
     <section class="hero" id="hero" data-section="hero">
       <div>
-        <h1>Acceso que no se cae. Operación simple. Gobernanza unificada.</h1>
-        <p class="muted">Validación <b>offline</b>, tablero en vivo y cierre documentado. Empezá con un piloto en 1 puerta y medí throughput y tiempos de cola.</p>
+        <h1 id="heroTitle">Acceso que no se cae. Operación simple. Gobernanza unificada.</h1>
+        <p class="muted" id="heroSub">Validación <b>offline</b>, tablero en vivo y cierre documentado. Empezá con un piloto en 1 puerta y medí throughput y tiempos de cola.</p>
         <div class="cta">
-          <a href="#demo"><button class="btn primary" data-cta="demo-hero">Reservar piloto</button></a>
-          <a href="#pricing"><button class="btn ghost" data-cta="ver-precios">Ver precios</button></a>
+          <a href="#demo"><button class="btn primary" data-cta="hero-primary">Reservar piloto</button></a>
+          <a href="#producto"><button class="btn ghost" data-cta="hero-secondary">Ver cómo funciona</button></a>
+        </div>
+        <div class="feedback">
+          <span class="tiny">¿Este enfoque te sirve?</span>
+          <span class="thumb" data-feedback="hero" data-v="up">👍 Sí</span>
+          <span class="thumb" data-feedback="hero" data-v="down">👎 No</span>
         </div>
       </div>
       <form id="leadHero" class="card">
@@ -69,18 +82,24 @@
     </section>
 
     <section id="valor" class="grid-3" data-section="valor">
-      <div class="card"><h3>Problema</h3><p>Caídas de red, apps múltiples y poca visibilidad en momentos críticos.</p></div>
-      <div class="card"><h3>Solución</h3><p>Lectores que validan <b>sin conexión</b>, hub único y tablero en vivo.</p></div>
-      <div class="card"><h3>Impacto</h3><p>Ingreso previsible, staff autónomo y cierre más rápido con trazabilidad.</p></div>
+      <div class="card"><h3>Problema</h3><p>Caídas de red, apps múltiples y poca visibilidad en momentos críticos.</p><a href="#producto" class="pill" data-open="detalle-problema">Ver detalle</a></div>
+      <div class="card"><h3>Solución</h3><p>Lectores que validan <b>sin conexión</b>, hub único y tablero en vivo.</p><span class="pill" data-open="detalle-solucion">Ver detalle</span></div>
+      <div class="card"><h3>Impacto</h3><p>Ingreso previsible, staff autónomo y cierre más rápido con trazabilidad.</p><span class="pill" data-open="detalle-impacto">Ver caso</span></div>
     </section>
 
-    <section id="como" class="card" data-section="como">
+    <section id="producto" class="card" data-section="producto">
       <h2>Cómo funciona</h2>
       <div class="grid-3">
-        <div><h3>1) Preparar</h3><p class="muted">Importás pases (CSV/API), definís puertas y franjas.</p></div>
-        <div><h3>2) Entrar</h3><p class="muted"><b>Validación offline</b> con sincronización segura cada N min.</p></div>
-        <div><h3>3) Cerrar</h3><p class="muted">Reporte unificado en &lt;24 h con auditoría.</p></div>
+        <div><h3>1) Preparar</h3><p class="muted">Importás pases (CSV/API), definís puertas y franjas.</p><a class="pill" data-open="det-preparar">Ver</a></div>
+        <div><h3>2) Entrar</h3><p class="muted"><b>Validación offline</b> con sincronización segura cada N min.</p><a class="pill" data-open="det-entrar">Ver</a></div>
+        <div><h3>3) Cerrar</h3><p class="muted">Reporte unificado en &lt;24 h con auditoría.</p><a class="pill" data-open="det-cerrar">Ver</a></div>
       </div>
+    </section>
+
+    <section id="casos" class="card" data-section="casos">
+      <h2>Casos</h2>
+      <details data-faq="caso1"><summary>Festival mediano (3 puertas offline)</summary><p>+24% throughput vs. control, 0 caídas por red. Cierre en 12 h.</p></details>
+      <details data-faq="caso2"><summary>Teatro (función pico)</summary><p>Tiempo de escaneo p50 0,45s; guía por puertas redujo colas.</p></details>
     </section>
 
     <section id="pricing" class="price" data-section="pricing">
@@ -88,19 +107,19 @@
         <h3>Starter</h3>
         <p class="muted">Piloto 1 puerta offline.</p>
         <ul><li>Setup guiado</li><li>Panel básico</li></ul>
-        <a href="#demo" class="btn primary" data-cta="pricing-starter">Probar</a>
+        <button class="btn primary" data-plan="Starter">Probar</button>
       </div>
       <div class="plan" style="border-color:rgba(124,140,255,.6)">
         <h3>Pro</h3>
         <p class="muted">Hasta 6 puertas + tablero en vivo.</p>
         <ul><li>Offline + sync</li><li>Conector ticketing/POS</li></ul>
-        <a href="#demo" class="btn primary" data-cta="pricing-pro">Consultar</a>
+        <button class="btn primary" data-plan="Pro">Consultar</button>
       </div>
       <div class="plan">
         <h3>Enterprise</h3>
         <p class="muted">SLA y multi‑sede.</p>
         <ul><li>SSO & auditoría</li><li>Soporte 24/7</li></ul>
-        <a href="#demo" class="btn primary" data-cta="pricing-enterprise">Hablar</a>
+        <button class="btn primary" data-plan="Enterprise">Hablar</button>
       </div>
     </section>
 
@@ -132,111 +151,119 @@
     </div>
   </footer>
 
+  <!-- Toast y Modales reutilizables -->
+  <div class="toast" id="toast"></div>
+  <div class="modal" id="modal">
+    <div class="box">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 id="modalTitle">Detalle</h3><button class="btn ghost" id="modalClose">Cerrar</button></div>
+      <div id="modalBody" class="muted" style="margin-top:6px"></div>
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+        <span class="tiny">¿Te interesa este apartado?</span>
+        <button class="btn ghost" data-modal-feedback="yes">Sí</button>
+        <button class="btn ghost" data-modal-feedback="no">No</button>
+      </div>
+    </div>
+  </div>
+
 <script>
-  // ====== MÉTRICAS → GOOGLE SHEETS (Apps Script) ======
-  // 1) Creá un Google Apps Script (Web App) con el código que te pasé.
-  // 2) Reemplazá la URL abajo (ENDPOINT) por la de tu despliegue (…/exec).
+  // ====== CONFIG ======
   const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzn7UiDUBOtGsolF2p37X1rMbhh7nmMdGdLN0Yw_r7j0Qr4vhVE0kk9K9hrbKjIIJJf/exec';
+  
+  // ====== TRACKING (Sheets) ======
+  const UTM_KEYS=['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+  const store={utm:{},sectionTimes:{},visible:{},start:Date.now(),maxScroll:0,sentDepths:new Set(),variant:'A'};
 
-  // ====== TRACKING BÁSICO (clics, scroll, dwell, leads) ======
-  const UTM_KEYS = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
-  const store = { utm:{}, sectionTimes:{}, visible:{}, start: Date.now(), maxScroll:0, sentDepths:new Set() };
+  function send(event, props={}){
+    const payload={ts:new Date().toISOString(),event,path:location.pathname+location.search+location.hash,ref:document.referrer,ua:navigator.userAgent,variant:store.variant,...store.utm,...props};
+    const body=JSON.stringify(payload);
+    if(navigator.sendBeacon){const blob=new Blob([body],{type:'text/plain;charset=UTF-8'});navigator.sendBeacon(ENDPOINT,blob);return;}
+    fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body,keepalive:true}).catch(()=>{});
+  }
+  function track(ev,props){if(ENDPOINT.startsWith('http')) send(ev,props); else console.log('[track]',ev,props);}
 
-  function send(event, props = {}) {
-    const payload = {
-        ts: new Date().toISOString(),
-        event,
-        path: location.pathname + location.search + location.hash,
-        ref: document.referrer,
-        ua: navigator.userAgent,
-        ...store.utm,
-        ...props
-    };
-    const body = JSON.stringify(payload);
+  // ====== Helpers UI ======
+  const $=sel=>document.querySelector(sel);
+  function toast(msg){const t=$('#toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2400)}
+  function openModal(title,html,id){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;$('#modal').style.display='flex';track('modal_open',{id});}
+  $('#modalClose').onclick=()=>{$('#modal').style.display='none';track('modal_close',{});} 
+  document.querySelectorAll('[data-modal-feedback]').forEach(b=>b.addEventListener('click',()=>{track('modal_feedback',{v:b.dataset.modalFeedback});toast('¡Gracias!')}));
 
-    // 1) Preferir sendBeacon (no hace preflight; usa text/plain)
-    if (navigator.sendBeacon) {
-        const blob = new Blob([body], { type: 'text/plain;charset=UTF-8' });
-        navigator.sendBeacon(ENDPOINT, blob);
-        return;
-    }
+  // ====== Variantes (A/B simple con ?v=b) ======
+  (function variant(){const p=new URLSearchParams(location.search);store.variant=(p.get('v')||'a').toUpperCase()==='B'?'B':'A';if(store.variant==='B'){document.getElementById('heroTitle').textContent='Gobernanza en tiempo real. Acceso sin fricción.';document.getElementById('heroSub').innerHTML='Panel operativo en vivo, <b>validación offline</b> y cierre auditado en 24 h.';} track('variant_assign',{variant:store.variant});})()
 
-    // 2) Fallback a fetch SIN preflight:
-    //    - mode: 'no-cors' (respuesta opaca, pero nos da igual)
-    //    - Content-Type simple: text/plain
-    fetch(ENDPOINT, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-        body,
-        keepalive: true
-    }).catch(() => {});
-}
+  // ====== UTMs ======
+  (function utm(){const p=new URLSearchParams(location.search);UTM_KEYS.forEach(k=>{const v=p.get(k)||sessionStorage.getItem(k)||''; if(v){store.utm[k]=v; sessionStorage.setItem(k,v);}});})();
 
-  function track(ev,props){ if(ENDPOINT && ENDPOINT.startsWith('http')) send(ev,props); else console.log('[track]',ev,props); }
-
-  // UTMs (persistencia por sesión)
-  (function utm(){
-    const p = new URLSearchParams(location.search);
-    UTM_KEYS.forEach(k=>{ const v = p.get(k) || sessionStorage.getItem(k) || ''; if(v){ store.utm[k]=v; sessionStorage.setItem(k,v); }});
-  })();
-
-  // Año footer y page_load
-  document.getElementById('year').textContent = new Date().getFullYear();
+  // Año + page_load + nav clicks
+  document.getElementById('year').textContent=new Date().getFullYear();
   track('page_load',{});
+  document.querySelectorAll('[data-nav]').forEach(a=>a.addEventListener('click',()=>track('nav_click',{to:a.dataset.nav})));
 
-  // Clicks en CTAs
-  document.querySelectorAll('[data-cta]').forEach(el=>{
-    el.addEventListener('click',()=>track('cta_click',{ id: el.dataset.cta }));
-  });
+  // CTA & feedback clicks
+  document.querySelectorAll('[data-cta]').forEach(el=>el.addEventListener('click',()=>track('cta_click',{id:el.dataset.cta})));
+  document.querySelectorAll('[data-feedback]').forEach(el=>el.addEventListener('click',()=>{track('feedback_vote',{loc:el.dataset.feedback,v:el.dataset.v});toast('¡Gracias por el feedback!')}));
 
-  // Scroll depth (25/50/75/100)
+  // Pricing plan interest → abre micro‑form modal
+  document.querySelectorAll('[data-plan]').forEach(btn=>btn.addEventListener('click',()=>{
+    const plan=btn.dataset.plan;
+    const html=`<p>Dejanos 2 datos y te contactamos por <b>${plan}</b>.</p>
+      <div class="grid-2">
+        <label>Nombre<br/><input id="mf_name"/></label>
+        <label>Email<br/><input id="mf_email" type="email"/></label>
+      </div>
+      <div class="chips" style="margin-top:8px">
+        <span class="chip" data-chip>Caídas de red</span>
+        <span class="chip" data-chip>Colas</span>
+        <span class="chip" data-chip>Integraciones</span>
+        <span class="chip" data-chip>Auditoría</span>
+      </div>
+      <div class="cta" style="margin-top:10px"><button class="btn primary" id="mf_send">Enviar</button></div>`;
+    openModal('Interés en plan',html,'plan_'+plan);
+    document.querySelectorAll('[data-chip]').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('pill')));
+    setTimeout(()=>{
+      const sendBtn=document.getElementById('mf_send');
+      if(sendBtn){sendBtn.addEventListener('click',()=>{
+        const name=document.getElementById('mf_name').value||'';
+        const email=document.getElementById('mf_email').value||'';
+        const pains=[...document.querySelectorAll('[data-chip].pill')].map(x=>x.textContent.trim());
+        track('plan_interest_submit',{plan,name,email,pains:pains.join('|')});
+        toast('¡Gracias! Te contactamos en <24 h.');
+        document.getElementById('modal').style.display='none';
+      });}
+    },0);
+  }));
+
+  // Detalles (modales de contenido)
+  const DETAILS={
+    'detalle-problema': '<ul><li>Dependencia de red en picos</li><li>Múltiples apps para acceso/pagos</li><li>Baja visibilidad para decidir</li></ul>',
+    'detalle-solucion': '<ul><li>Validación offline con sync seguro</li><li>Hub único: acceso + POS</li><li>Panel con alertas por puerta</li></ul>',
+    'detalle-impacto': '<p>Throughput +20–30%, cero caídas por red, cierre en 24 h con auditoría.</p>',
+    'det-preparar': '<p>Importás CSV o API. Definís reglas por puerta/franja y listas de control.</p>',
+    'det-entrar': '<p>Operación en modo avión. Reintentos automáticos y colas locales.</p>',
+    'det-cerrar': '<p>Reportes por puerta y usuarios, exportes firmados y bitácora de incidentes.</p>'
+  };
+  document.querySelectorAll('[data-open]').forEach(e=>e.addEventListener('click',()=>{const id=e.dataset.open;openModal('Detalle',DETAILS[id]||'Detalle',id);}));
+
+  // FAQ / Casos toggles
+  document.querySelectorAll('details[data-faq]').forEach(d=>d.addEventListener('toggle',()=>track('faq_toggle',{id:d.dataset.faq,open:d.open})));
+
+  // Dwell por sección + scroll depth
   window.addEventListener('scroll',()=>{
-    const percent = Math.round((window.scrollY + window.innerHeight) / document.body.scrollHeight * 100);
-    [25,50,75,100].forEach(t=>{
-      if(percent>=t && !store.sentDepths.has(t)){ store.sentDepths.add(t); track('scroll_depth',{ percent:t }); }
-    });
-    if (percent>store.maxScroll) store.maxScroll = percent;
+    const percent=Math.round((window.scrollY+window.innerHeight)/document.body.scrollHeight*100);
+    [25,50,75,100].forEach(t=>{if(percent>=t&&!store.sentDepths.has(t)){store.sentDepths.add(t);track('scroll_depth',{percent:t});}}); if(percent>store.maxScroll) store.maxScroll=percent;
   },{passive:true});
 
-  // Dwell por sección
   (function sectionDwell(){
-    const sections = document.querySelectorAll('[data-section]');
-    const io = new IntersectionObserver(entries=>{
-      entries.forEach(e=>{
-        const id = e.target.getAttribute('data-section');
-        if(!store.sectionTimes[id]) store.sectionTimes[id]=0;
-        if(e.isIntersecting){ store.visible[id]=Date.now(); track('section_view',{ id }); }
-        else if(store.visible[id]){ store.sectionTimes[id]+= Date.now()-store.visible[id]; store.visible[id]=0; }
-      });
-    },{threshold:0.6});
+    const sections=document.querySelectorAll('[data-section]');
+    const io=new IntersectionObserver(entries=>{entries.forEach(e=>{const id=e.target.getAttribute('data-section'); if(!store.sectionTimes[id]) store.sectionTimes[id]=0; if(e.isIntersecting){store.visible[id]=Date.now(); track('section_view',{id});} else if(store.visible[id]){store.sectionTimes[id]+=Date.now()-store.visible[id]; store.visible[id]=0;}})}, {threshold:0.6});
     sections.forEach(s=>io.observe(s));
-
-    function flush(){
-      Object.keys(store.visible).forEach(id=>{ if(store.visible[id]){ store.sectionTimes[id]+= Date.now()-store.visible[id]; store.visible[id]=0; }});
-      Object.entries(store.sectionTimes).forEach(([id,ms])=> track('section_dwell',{ id, seconds: Math.round(ms/1000) }));
-      track('time_on_page',{ seconds: Math.round((Date.now()-store.start)/1000), maxScroll: store.maxScroll });
-    }
-    window.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') flush(); });
-    window.addEventListener('beforeunload',flush);
+    function flush(){Object.keys(store.visible).forEach(id=>{if(store.visible[id]){store.sectionTimes[id]+=Date.now()-store.visible[id]; store.visible[id]=0;}}); Object.entries(store.sectionTimes).forEach(([id,ms])=>track('section_dwell',{id,seconds:Math.round(ms/1000)})); track('time_on_page',{seconds:Math.round((Date.now()-store.start)/1000),maxScroll:store.maxScroll});}
+    window.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden') flush();}); window.addEventListener('beforeunload',flush);
   })();
 
-  // Formularios → lead_submit (se guardan en la misma hoja)
-  function bindLeadForm(id){
-    const f = document.getElementById(id); if(!f) return;
-    f.addEventListener('submit', (ev)=>{
-      ev.preventDefault();
-      const fd = new FormData(f);
-      const data = Object.fromEntries(fd.entries());
-      track('lead_submit',{ form:id, name:data.name||'', email:data.email||'', role:data.role||'' });
-      f.reset();
-      const msg = document.createElement('div');
-      msg.textContent = '¡Gracias! Te contactamos en <24 h.';
-      msg.className = 'tiny'; f.appendChild(msg); setTimeout(()=>msg.remove(),4000);
-    });
-  }
-  bindLeadForm('leadHero');
-  bindLeadForm('leadDemo');
+  // Formularios → lead_submit
+  function bindLeadForm(id){const f=document.getElementById(id); if(!f) return; f.addEventListener('submit',ev=>{ev.preventDefault(); const fd=new FormData(f); const data=Object.fromEntries(fd.entries()); track('lead_submit',{form:id,name:data.name||'',email:data.email||'',role:data.role||''}); f.reset(); toast('¡Gracias! Te contactamos en <24 h.');});}
+  bindLeadForm('leadHero'); bindLeadForm('leadDemo');
 </script>
 </body>
 </html>
