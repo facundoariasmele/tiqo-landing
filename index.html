@@ -3,229 +3,316 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tiqo — Acceso offline‑first para eventos</title>
+  <title>TIQO — Acceso offline‑first para eventos</title>
   <meta name="description" content="Validación offline, operación simple y gobernanza unificada. Piloto en 1 puerta para medir throughput y tiempos de cola." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#ffffff;--text:#0f172a;--muted:#64748b;--subtle:#eef2ff;--line:#e2e8f0;
-      --brand:#7c3aed;--brand-2:#06b6d4;--ok:#16a34a;--warn:#f59e0b;--err:#ef4444;
-      --radius:18px;--shadow:0 10px 30px rgba(2,6,23,.07);
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto}
-    a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
-    .wrap{max-width:1160px;margin:0 auto;padding:24px}
-    header{position:sticky;top:0;background:rgba(255,255,255,.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:20}
-    .nav{display:flex;align-items:center;gap:18px}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
-    .brand img{height:28px}
-    nav a{padding:10px 12px;border-radius:10px}
-    nav a:hover{background:#f8fafc}
-    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;padding:28px 0}
-    .kicker{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--subtle),#f0f9ff);color:#334155;border:1px solid var(--line);padding:6px 10px;border-radius:999px;font-weight:600}
-    h1{font-size:46px;line-height:1.05;margin:10px 0 12px}
-    .highlight{background:linear-gradient(135deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;color:transparent}
-    .muted{color:var(--muted)}
-    .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
-    .btn{appearance:none;border:none;border-radius:12px;padding:13px 18px;font-weight:700;cursor:pointer}
-    .btn.primary{background:linear-gradient(135deg,var(--brand),#8b5cf6);color:white;box-shadow:var(--shadow)}
-    .btn.ghost{background:white;border:1px solid var(--line)}
-    .card{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-    .section{padding:26px 0}
-    .section h2{font-size:28px;margin:0 0 10px}
-    .device{position:relative;background:linear-gradient(180deg,#0b1020,#111827);border-radius:24px;border:1px solid #0f172a;box-shadow:0 20px 40px rgba(2,6,23,.15);padding:20px;color:#e5e7eb}
-    .device .bar{display:flex;gap:8px;margin-bottom:12px}
-    .dot{width:8px;height:8px;border-radius:999px;background:#94a3b8}
-    .scanner{height:360px;border-radius:14px;background:radial-gradient(circle at 50% 50%, rgba(124,58,237,.25), rgba(6,182,212,.18) 40%, transparent 65%),linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);display:grid;place-items:center;position:relative;overflow:hidden}
-    .beam{position:absolute;width:110%;height:2px;background:linear-gradient(90deg,transparent,rgba(59,130,246,.8),transparent);top:0;animation:scan 2.8s linear infinite}
-    @keyframes scan{0%{top:0}100%{top:100%}}
-    .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:8px 12px;border-radius:999px;background:#fff}
-    .feature{display:flex;gap:12px}
-    .feature svg{flex:0 0 36px}
-    .price{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .plan{padding:20px;border-radius:16px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow)}
-    .plan.best{border-color:#c4b5fd;box-shadow:0 10px 30px rgba(124,58,237,.12)}
-    .plan .head{display:flex;justify-content:space-between;align-items:center}
-    .bullets{margin:8px 0 0 18px}
-    .logos{display:flex;gap:18px;opacity:.75;flex-wrap:wrap}
-    .logos span{height:26px;width:100px;border-radius:8px;background:#f1f5f9;border:1px solid var(--line)}
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:#f1f5ff;border:1px solid #dbeafe;color:#1e3a8a;font-weight:600}
-    .faq details{background:#f8fafc;border:1px solid var(--line);padding:12px 14px;border-radius:12px}
-    .faq details+details{margin-top:8px}
-    footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0}
-    .reveal{opacity:0;transform:translateY(8px);transition:all .5s ease}
-    .reveal.show{opacity:1;transform:none}
-    @media (max-width:980px){.hero{grid-template-columns:1fr}.grid-3,.grid-2,.price{grid-template-columns:1fr}}
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] },
+          colors: {
+            brand: {
+              50:'#f5f3ff',100:'#ede9fe',200:'#ddd6fe',300:'#c4b5fd',400:'#a78bfa',
+              500:'#8b5cf6',600:'#7c3aed',700:'#6d28d9',800:'#5b21b6',900:'#4c1d95'
+            },
+            ocean: { 400:'#22d3ee',500:'#06b6d4' }
+          },
+          boxShadow: { soft: '0 10px 30px rgba(2,6,23,.08)' }
+        }
+      }
+    };
+  </script>
+  <style> .reveal{opacity:0;transform:translateY(8px);transition:all .5s ease} .reveal.show{opacity:1;transform:none} </style>
 </head>
-<body>
-<header>
-  <div class="wrap nav">
-    <div class="brand"><img src="tiqo-logo.png" alt="Tiqo"/> TIQO</div>
-    <nav style="margin-left:auto;display:flex;gap:6px">
-      <a href="#valor">Valor</a>
-      <a href="#producto">Producto</a>
-      <a href="#pricing">Precios</a>
-      <a href="#casos">Casos</a>
-      <a class="btn primary" href="#demo">Probar piloto</a>
-    </nav>
-  </div>
-</header>
-
-<main class="wrap">
-  <section class="hero">
-    <div>
-      <span class="kicker">Offline‑first para eventos</span>
-      <h1>Acceso <span class="highlight">que no se cae</span> y operación con <span class="highlight">gobernanza</span>.</h1>
-      <p class="muted">Validación sin conexión, panel en vivo y cierre auditado en 24 h. Empezá con un piloto en 1 puerta y medí throughput y tiempos de cola.</p>
-      <div class="cta">
-        <a href="#demo"><button class="btn primary" data-cta="hero_primary">Reservar piloto</button></a>
-        <a href="#producto"><button class="btn ghost" data-cta="hero_secondary">Ver cómo funciona</button></a>
-        <span class="chip">⏱ p50 escaneo: 0,45 s</span>
-        <span class="chip">📶 100% offline en puerta</span>
-      </div>
-      <div class="logos" style="margin-top:16px">
-        <span></span><span></span><span></span><span></span>
-      </div>
+<body class="bg-white text-slate-900">
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-50 backdrop-blur border-b border-slate-200/70 bg-white/80">
+    <div class="max-w-7xl mx-auto px-5 py-3 flex items-center gap-4">
+      <a href="#" class="flex items-center gap-2 font-extrabold tracking-tight text-slate-900">
+        <img src="tiqo-logo.png" alt="TIQO" class="h-8 w-auto"/>
+        <span>TIQO</span>
+      </a>
+      <nav class="ml-auto hidden md:flex items-center gap-1 text-sm">
+        <a href="#valor" class="px-3 py-2 rounded-lg hover:bg-slate-100" data-nav="valor">Valor</a>
+        <a href="#producto" class="px-3 py-2 rounded-lg hover:bg-slate-100" data-nav="producto">Producto</a>
+        <a href="#casos" class="px-3 py-2 rounded-lg hover:bg-slate-100" data-nav="casos">Casos</a>
+        <a href="#pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100" data-nav="pricing">Precios</a>
+        <a href="#demo" class="ml-2 inline-flex items-center gap-2 rounded-xl bg-brand-600 text-white px-4 py-2 shadow-soft hover:bg-brand-700" data-cta="nav_demo">Probar piloto</a>
+      </nav>
     </div>
-    <div class="device reveal">
-      <div class="bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-      <div class="scanner">
-        <div class="beam"></div>
-        <div style="text-align:center">
-          <div class="badge">Modo avión activo</div>
-          <h3 style="margin:10px 0 6px">Listo para validar</h3>
-          <p class="muted" style="margin:0">Pase #A1C9 • Puerta Norte • 14:05</p>
+  </header>
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10 bg-gradient-to-br from-brand-50 via-white to-ocean-50"></div>
+    <div class="max-w-7xl mx-auto px-5 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <div class="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full">Offline‑first • Panel en vivo • Auditoría 24 h</div>
+        <h1 id="heroTitle" class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight">
+          Acceso <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-ocean-500">que no se cae</span> y operación con <span class="bg-clip-text text-transparent bg-gradient-to-r from-ocean-500 to-brand-600">gobernanza</span>.
+        </h1>
+        <p id="heroSub" class="mt-4 text-slate-600 max-w-xl">Validación sin conexión, tablero en vivo y cierre auditado en 24 h. Empezá con un piloto en 1 puerta y medí throughput y tiempos de cola.</p>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <a href="#demo" class="inline-flex rounded-xl bg-brand-600 text-white px-5 py-3 font-semibold shadow-soft hover:bg-brand-700" data-cta="hero_primary">Reservar piloto</a>
+          <a href="#producto" class="inline-flex rounded-xl border border-slate-300 px-5 py-3 font-semibold hover:bg-slate-50" data-cta="hero_secondary">Ver cómo funciona</a>
+          <span class="inline-flex items-center gap-2 text-sm text-slate-600"><span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span> p50 escaneo: 0,45 s</span>
+          <span class="inline-flex items-center gap-2 text-sm text-slate-600"><span class="inline-block w-2 h-2 rounded-full bg-sky-500"></span> 100% offline en puerta</span>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="relative rounded-3xl border border-slate-200 bg-white shadow-soft p-4">
+          <div class="aspect-[4/3] rounded-2xl bg-gradient-to-b from-slate-900 to-slate-800 text-slate-100 relative overflow-hidden">
+            <div class="absolute inset-x-0 top-10 h-0.5 bg-gradient-to-r from-transparent via-sky-400 to-transparent animate-[scan_2.8s_linear_infinite]"></div>
+            <div class="absolute left-4 top-4 px-3 py-1 rounded-full border border-emerald-300/40 bg-emerald-400/10 text-emerald-300 text-xs font-semibold">Modo avión</div>
+            <div class="absolute inset-0 grid place-items-center">
+              <div class="text-center">
+                <h3 class="text-lg font-semibold">Listo para validar</h3>
+                <p class="text-slate-300 text-sm">Pase #A1C9 • Puerta Norte • 14:05</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="valor" class="section reveal">
-    <h2>Valor</h2>
-    <div class="grid-3">
-      <div class="card feature">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7h16M4 12h16M4 17h16" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/></svg>
-        <div><h3>Sin caídas en puerta</h3><p class="muted">Validación offline con sincronización segura. Sin filas por red.</p></div>
+  <!-- VALOR -->
+  <section id="valor" class="max-w-7xl mx-auto px-5 py-14 reveal">
+    <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">Valor</h2>
+    <div class="mt-6 grid md:grid-cols-3 gap-5">
+      <div class="p-6 rounded-2xl border border-slate-200 bg-white shadow-soft">
+        <div class="h-10 w-10 grid place-items-center rounded-lg bg-brand-50 text-brand-700">📶</div>
+        <h3 class="mt-3 font-semibold text-lg">Sin caídas en puerta</h3>
+        <p class="text-slate-600">Validación offline con sincronización segura. Sin filas por red.</p>
       </div>
-      <div class="card feature">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v18M3 12h18" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/></svg>
-        <div><h3>Un solo hub</h3><p class="muted">Acceso + POS + panel. Menos saltos entre apps, más control.</p></div>
+      <div class="p-6 rounded-2xl border border-slate-200 bg-white shadow-soft">
+        <div class="h-10 w-10 grid place-items-center rounded-lg bg-sky-50 text-sky-700">🧭</div>
+        <h3 class="mt-3 font-semibold text-lg">Un solo hub</h3>
+        <p class="text-slate-600">Acceso + POS + panel. Menos saltos entre apps, más control.</p>
       </div>
-      <div class="card feature">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="#22c55e" stroke-width="2"/><path d="M8 12l2.5 2.5L16 9" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/></svg>
-        <div><h3>Gobernanza</h3><p class="muted">Trazabilidad por puerta/usuario, alertas y cierre auditado.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="producto" class="section reveal">
-    <h2>Cómo funciona</h2>
-    <div class="grid-3">
-      <div class="card"><h3>1. Preparar</h3><p class="muted">Importás pases (CSV/API), definís puertas y reglas.</p></div>
-      <div class="card"><h3>2. Entrar</h3><p class="muted">Validación en modo avión y sync cada N min.</p></div>
-      <div class="card"><h3>3. Cerrar</h3><p class="muted">Reporte unificado en 24 h con auditoría.</p></div>
-    </div>
-  </section>
-
-  <section id="casos" class="section reveal">
-    <h2>Casos</h2>
-    <div class="card grid-3">
-      <div><div class="badge">Festival (3 puertas)</div><h3>+24% throughput</h3><p class="muted">Vs. control. 0 caídas por red.</p></div>
-      <div><div class="badge">Teatro</div><h3>p50 0,45 s</h3><p class="muted">Escaneo por pase en función pico.</p></div>
-      <div><div class="badge">Venue</div><h3>Cierre 12 h</h3><p class="muted">Reporte auditado mismo día.</p></div>
-    </div>
-  </section>
-
-  <section id="pricing" class="section reveal">
-    <h2>Precios</h2>
-    <div class="price">
-      <div class="plan"><div class="head"><h3>Starter</h3><span class="badge">Piloto</span></div>
-        <p class="muted">1 puerta offline, hasta 3.000 ingresos.</p>
-        <ul class="bullets"><li>Setup guiado</li><li>Panel básico</li></ul>
-        <a href="#demo" class="btn ghost" data-cta="pricing_starter">Probar gratis</a>
-      </div>
-      <div class="plan best"><div class="head"><h3>Pro</h3><span class="badge">Eventos</span></div>
-        <p class="muted">Hasta 6 puertas + tablero en vivo.</p>
-        <ul class="bullets"><li>Offline + sync</li><li>1 conector ticketing/POS</li><li>Soporte prioritario</li></ul>
-        <a href="#demo" class="btn primary" data-cta="pricing_pro">Solicitar precio</a>
-      </div>
-      <div class="plan"><div class="head"><h3>Enterprise</h3><span class="badge">Venue</span></div>
-        <p class="muted">SLA, multi‑sede y auditoría avanzada.</p>
-        <ul class="bullets"><li>SSO & controles</li><li>Onboarding en sitio</li></ul>
-        <a href="#demo" class="btn ghost" data-cta="pricing_enterprise">Hablar con ventas</a>
+      <div class="p-6 rounded-2xl border border-slate-200 bg-white shadow-soft">
+        <div class="h-10 w-10 grid place-items-center rounded-lg bg-emerald-50 text-emerald-700">🧾</div>
+        <h3 class="mt-3 font-semibold text-lg">Gobernanza</h3>
+        <p class="text-slate-600">Trazabilidad por puerta/usuario, alertas y cierre auditado.</p>
       </div>
     </div>
   </section>
 
-  <section id="demo" class="section reveal">
-    <div class="card grid-2">
+  <!-- PRODUCTO -->
+  <section id="producto" class="max-w-7xl mx-auto px-5 py-14 reveal">
+    <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">Cómo funciona</h2>
+    <div class="mt-6 grid md:grid-cols-3 gap-5">
+      <div class="p-6 rounded-2xl border border-slate-200 bg-white shadow-soft">
+        <h3 class="font-semibold">1. Preparar</h3>
+        <p class="text-slate-600">Importás pases (CSV/API), definís puertas y reglas.</p>
+      </div>
+      <div class="p-6 rounded-2xl border border-slate-200 bg-white shadow-soft">
+        <h3 class="font-semibold">2. Entrar</h3>
+        <p class="text-slate-600">Validación en modo avión y sync cada N min.</p>
+      </div>
+      <div class="p-6 rounded-2xl border border-slate-200 bg-white shadow-soft">
+        <h3 class="font-semibold">3. Cerrar</h3>
+        <p class="text-slate-600">Reporte unificado en 24 h con auditoría.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASOS -->
+  <section id="casos" class="max-w-7xl mx-auto px-5 py-14 reveal">
+    <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">Casos</h2>
+    <div class="mt-6 grid md:grid-cols-3 gap-5">
+      <div class="p-6 rounded-2xl border border-slate-200 bg-white shadow-soft">
+        <div class="inline-flex items-center gap-2 text-xs font-semibold text-indigo-900 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-full">Festival (3 puertas)</div>
+        <h3 class="mt-3 text-xl font-bold">+24% throughput</h3>
+        <p class="text-slate-600">Vs. control. 0 caídas por red.</p>
+      </div>
+      <div class="p-6 rounded-2xl border border-slate-200 bg-white shadow-soft">
+        <div class="inline-flex items-center gap-2 text-xs font-semibold text-sky-900 bg-sky-50 border border-sky-200 px-3 py-1 rounded-full">Teatro</div>
+        <h3 class="mt-3 text-xl font-bold">p50 0,45 s</h3>
+        <p class="text-slate-600">Escaneo por pase en función pico.</p>
+      </div>
+      <div class="p-6 rounded-2xl border border-slate-200 bg-white shadow-soft">
+        <div class="inline-flex items-center gap-2 text-xs font-semibold text-emerald-900 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">Venue</div>
+        <h3 class="mt-3 text-xl font-bold">Cierre 12 h</h3>
+        <p class="text-slate-600">Reporte auditado mismo día.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" class="max-w-7xl mx-auto px-5 py-14 reveal">
+    <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">Precios</h2>
+    <div class="mt-6 grid md:grid-cols-3 gap-5">
+      <div class="rounded-2xl border border-slate-200 bg-white shadow-soft p-6">
+        <div class="flex items-center justify-between"><h3 class="font-bold text-lg">Starter</h3><span class="text-xs font-semibold px-2 py-1 rounded-full bg-slate-100 border border-slate-200">Piloto</span></div>
+        <p class="mt-2 text-slate-600">1 puerta offline, hasta 3.000 ingresos.</p>
+        <ul class="list-disc pl-5 mt-3 text-slate-700 space-y-1">
+          <li>Setup guiado</li><li>Panel básico</li>
+        </ul>
+        <button class="mt-5 w-full rounded-xl border border-slate-300 px-4 py-2 font-semibold hover:bg-slate-50" data-plan="Starter">Probar gratis</button>
+      </div>
+      <div class="rounded-2xl border-2 border-brand-200 bg-white shadow-soft p-6">
+        <div class="flex items-center justify-between"><h3 class="font-bold text-lg">Pro</h3><span class="text-xs font-semibold px-2 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-700">Eventos</span></div>
+        <p class="mt-2 text-slate-600">Hasta 6 puertas + tablero en vivo.</p>
+        <ul class="list-disc pl-5 mt-3 text-slate-700 space-y-1">
+          <li>Offline + sync</li><li>1 conector ticketing/POS</li><li>Soporte prioritario</li>
+        </ul>
+        <button class="mt-5 w-full rounded-xl bg-brand-600 text-white px-4 py-2 font-semibold shadow-soft hover:bg-brand-700" data-plan="Pro">Solicitar precio</button>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-white shadow-soft p-6">
+        <div class="flex items-center justify-between"><h3 class="font-bold text-lg">Enterprise</h3><span class="text-xs font-semibold px-2 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">Venue</span></div>
+        <p class="mt-2 text-slate-600">SLA, multi‑sede y auditoría avanzada.</p>
+        <ul class="list-disc pl-5 mt-3 text-slate-700 space-y-1">
+          <li>SSO & controles</li><li>Onboarding en sitio</li>
+        </ul>
+        <button class="mt-5 w-full rounded-xl border border-slate-300 px-4 py-2 font-semibold hover:bg-slate-50" data-plan="Enterprise">Hablar con ventas</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section id="demo" class="max-w-7xl mx-auto px-5 py-14 reveal">
+    <div class="grid md:grid-cols-2 gap-6 items-start rounded-2xl border border-slate-200 bg-white shadow-soft p-6">
       <div>
-        <h2>Reservá demo / piloto</h2>
-        <p class="muted">Medimos en sitio: % offline, p50 de escaneo y throughput.</p>
+        <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">Reservá demo / piloto</h2>
+        <p class="mt-2 text-slate-600">Medimos en sitio: % offline, p50 de escaneo y throughput.</p>
       </div>
-      <form id="leadForm">
-        <label>Nombre y empresa<br/><input name="name" required placeholder="Ana — XYZ Live"/></label><br/>
-        <label>Email corporativo<br/><input name="email" type="email" required placeholder="ana@organizador.com"/></label><br/>
-        <label>Rol<br/>
-          <select name="role" required>
+      <form id="leadForm" class="space-y-3">
+        <div>
+          <label class="block text-sm font-medium">Nombre y empresa</label>
+          <input name="name" required placeholder="Ana — XYZ Live" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-4 focus:ring-brand-200"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Email corporativo</label>
+          <input name="email" type="email" required placeholder="ana@organizador.com" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-4 focus:ring-brand-200"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Rol</label>
+          <select name="role" required class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 bg-white focus:outline-none focus:ring-4 focus:ring-brand-200">
             <option value="">Elegí…</option>
             <option>Operaciones</option><option>Accesos</option><option>Venue/IT</option><option>Productor</option>
           </select>
-        </label><br/>
-        <button class="btn primary" type="submit" data-cta="lead_submit">Agendar</button>
-        <p class="tiny muted">Respondemos en &lt;24 h. NDA si lo necesitás.</p>
+        </div>
+        <button class="w-full rounded-xl bg-brand-600 text-white px-4 py-2 font-semibold shadow-soft hover:bg-brand-700" type="submit" data-cta="lead_submit">Agendar</button>
+        <p class="text-xs text-slate-500">Respondemos en &lt;24 h. NDA si lo necesitás.</p>
       </form>
     </div>
   </section>
-</main>
 
-<footer>
-  <div class="wrap" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
-    <small>© <span id="year"></span> Tiqo</small>
-    <small><a href="#">Privacidad</a> · <a href="#">Términos</a></small>
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-200/70">
+    <div class="max-w-7xl mx-auto px-5 py-6 text-sm text-slate-600 flex flex-wrap items-center justify-between gap-2">
+      <span>© <span id="year"></span> TIQO</span>
+      <span class="flex items-center gap-4"><a href="#">Privacidad</a><a href="#">Términos</a></span>
+    </div>
+  </footer>
+
+  <!-- MODAL SIMPLE para interés en Plan -->
+  <div id="planModal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4">
+    <div class="max-w-md w-full rounded-2xl bg-white shadow-soft p-6 border border-slate-200">
+      <div class="flex items-start justify-between gap-4">
+        <h3 class="font-bold text-lg" id="planTitle">Interés en plan</h3>
+        <button id="planClose" class="rounded-lg border border-slate-300 px-3 py-1.5 hover:bg-slate-50">Cerrar</button>
+      </div>
+      <p class="mt-2 text-slate-600">Dejanos 2 datos y te contactamos.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+        <div><label class="block text-sm">Nombre</label><input id="mf_name" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"/></div>
+        <div><label class="block text-sm">Email</label><input id="mf_email" type="email" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"/></div>
+      </div>
+      <div class="mt-3">
+        <span class="text-sm text-slate-600">¿Cuál es tu mayor dolor hoy?</span>
+        <div class="mt-2 flex flex-wrap gap-2" id="chips">
+          <button class="px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-50" data-chip>Caídas de red</button>
+          <button class="px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-50" data-chip>Colas</button>
+          <button class="px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-50" data-chip>Integraciones</button>
+          <button class="px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-50" data-chip>Auditoría</button>
+        </div>
+      </div>
+      <button id="planSend" class="mt-5 w-full rounded-xl bg-brand-600 text-white px-4 py-2 font-semibold shadow-soft hover:bg-brand-700">Enviar</button>
+    </div>
   </div>
-</footer>
 
-<script>
-  // ===== CONFIG =====
-const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzn7UiDUBOtGsolF2p37X1rMbhh7nmMdGdLN0Yw_r7j0Qr4vhVE0kk9K9hrbKjIIJJf/exec';
-  // ===== Reveal on scroll =====
-  const io=new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('show',e.isIntersecting)),{threshold:.2});
-  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  <!-- SCRIPTS -->
+  <script>
+    // ===== Reveal on Scroll =====
+    const io=new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('show',e.isIntersecting)),{threshold:.2});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-  // ===== Tracking a Google Sheets =====
-  const UTM_KEYS=['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
-  const store={utm:{},start:Date.now(),maxScroll:0,sentDepths:new Set()};
-  (function utm(){const p=new URLSearchParams(location.search);UTM_KEYS.forEach(k=>{const v=p.get(k)||sessionStorage.getItem(k)||'';if(v){store.utm[k]=v;sessionStorage.setItem(k,v);}})})();
+    // ===== Simple modal util =====
+    const modal=document.getElementById('planModal');
+    const planTitle=document.getElementById('planTitle');
+    const planClose=document.getElementById('planClose');
+    const mfName=document.getElementById('mf_name');
+    const mfEmail=document.getElementById('mf_email');
+    const chips=document.getElementById('chips');
+    let currentPlan='';
+    planClose.onclick=()=>modal.classList.add('hidden');
+    chips.addEventListener('click',(e)=>{ if(e.target.matches('[data-chip]')) e.target.classList.toggle('bg-slate-100'); });
 
-  function send(payload){
-    const body=JSON.stringify(payload);
-    if(navigator.sendBeacon){const blob=new Blob([body],{type:'text/plain;charset=UTF-8'});navigator.sendBeacon(ENDPOINT,blob);return}
-    fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body,keepalive:true}).catch(()=>{})
-  }
-  function track(event,props={}){ if(!ENDPOINT.startsWith('http')){ console.log('[track]',event,props); return;} send({ts:new Date().toISOString(),event,path:location.pathname+location.search+location.hash,ref:document.referrer,ua:navigator.userAgent,...store.utm,...props}); }
+    // Open modal from pricing buttons
+    document.querySelectorAll('[data-plan]').forEach(btn=>btn.addEventListener('click',()=>{
+      currentPlan=btn.dataset.plan; planTitle.textContent=`Interés en plan ${currentPlan}`; modal.classList.remove('hidden');
+    }));
+  </script>
 
-  // page load + year
-  document.getElementById('year').textContent=new Date().getFullYear();
-  track('page_load',{});
+  <script>
+    // ====== MÉTRICAS → GOOGLE SHEETS (Apps Script) ======
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzn7UiDUBOtGsolF2p37X1rMbhh7nmMdGdLN0Yw_r7j0Qr4vhVE0kk9K9hrbKjIIJJf/exec';
+    const UTM_KEYS=['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+    const store={utm:{},start:Date.now(),maxScroll:0,sentDepths:new Set(),variant:'A'};
 
-  // nav & CTA clicks
-  document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',()=>track('nav_click',{to:a.getAttribute('href').replace('#','')})));
-  document.querySelectorAll('[data-cta]').forEach(b=>b.addEventListener('click',()=>track('cta_click',{id:b.dataset.cta})));
+    // Variant by query (?v=b)
+    (function variant(){ const p=new URLSearchParams(location.search); store.variant=(p.get('v')||'a').toUpperCase()==='B'?'B':'A'; })();
 
-  // scroll depth buckets
-  window.addEventListener('scroll',()=>{const p=Math.round((scrollY+innerHeight)/document.body.scrollHeight*100);[25,50,75,100].forEach(t=>{if(p>=t&&!store.sentDepths.has(t)){store.sentDepths.add(t);track('scroll_depth',{percent:t});}}); if(p>store.maxScroll) store.maxScroll=p;},{passive:true});
-  window.addEventListener('beforeunload',()=>track('time_on_page',{seconds:Math.round((Date.now()-store.start)/1000),maxScroll:store.maxScroll}));
+    // UTM persistence
+    (function utm(){const p=new URLSearchParams(location.search); UTM_KEYS.forEach(k=>{const v=p.get(k)||sessionStorage.getItem(k)||''; if(v){ store.utm[k]=v; sessionStorage.setItem(k,v); }});})();
 
-  // lead form
-  const f=document.getElementById('leadForm');
-  f.addEventListener('submit',ev=>{ev.preventDefault();const fd=new FormData(f);const d=Object.fromEntries(fd.entries());track('lead_submit',d);f.reset();alert('¡Gracias! Te contactamos en <24 h.');});
-</script>
+    function send(payload){ const body=JSON.stringify(payload);
+      if(navigator.sendBeacon){ const blob=new Blob([body],{type:'text/plain;charset=UTF-8'}); navigator.sendBeacon(ENDPOINT,blob); return; }
+      fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body,keepalive:true}).catch(()=>{});
+    }
+    function track(event,props={}){ if(!ENDPOINT.startsWith('http')){ console.log('[track]',event,props); return; } send({ts:new Date().toISOString(),event,variant:store.variant,path:location.pathname+location.search+location.hash,ref:document.referrer,ua:navigator.userAgent,...store.utm,...props}); }
+
+    // Year + page load
+    document.getElementById('year') && (document.getElementById('year').textContent=new Date().getFullYear());
+    track('page_load',{});
+
+    // nav clicks & hero ctas
+    document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',()=>track('nav_click',{to:a.getAttribute('href').replace('#','')})));
+    document.querySelectorAll('[data-cta]').forEach(b=>b.addEventListener('click',()=>track('cta_click',{id:b.dataset.cta})));
+
+    // pricing plan intent (opens modal)
+    document.querySelectorAll('[data-plan]').forEach(btn=>btn.addEventListener('click',()=>track('plan_intent',{plan:btn.dataset.plan})));
+
+    // modal submit
+    document.getElementById('planSend').addEventListener('click',()=>{
+      const pains=[...document.querySelectorAll('#chips [data-chip].bg-slate-100')].map(x=>x.textContent.trim());
+      track('plan_interest_submit',{plan:currentPlan,name:mfName.value||'',email:mfEmail.value||'',pains:pains.join('|')});
+      modal.classList.add('hidden');
+      mfName.value=''; mfEmail.value=''; document.querySelectorAll('#chips [data-chip]').forEach(x=>x.classList.remove('bg-slate-100'));
+      alert('¡Gracias! Te contactamos en <24 h.');
+    });
+
+    // scroll depth buckets
+    window.addEventListener('scroll',()=>{ const p=Math.round((scrollY+innerHeight)/document.body.scrollHeight*100); [25,50,75,100].forEach(t=>{ if(p>=t && !store.sentDepths.has(t)){ store.sentDepths.add(t); track('scroll_depth',{percent:t}); } }); if(p>store.maxScroll) store.maxScroll=p; }, {passive:true});
+
+    // time on page
+    window.addEventListener('beforeunload',()=>track('time_on_page',{seconds:Math.round((Date.now()-store.start)/1000),maxScroll:store.maxScroll}));
+
+    // lead form submit
+    document.getElementById('leadForm').addEventListener('submit',(ev)=>{
+      ev.preventDefault();
+      const fd=new FormData(ev.target); const d=Object.fromEntries(fd.entries());
+      track('lead_submit', d);
+      ev.target.reset();
+      alert('¡Gracias! Te contactamos en <24 h.');
+    });
+  </script>
+
+  <style>@keyframes scan{0%{transform:translateY(0)}100%{transform:translateY(260px)}}</style>
 </body>
 </html>
